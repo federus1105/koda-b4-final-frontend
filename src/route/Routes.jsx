@@ -1,13 +1,32 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
-import { Slide } from "react-toastify";
+import { Slide, ToastContainer } from "react-toastify";
+import Register from "../pages/auth/Register";
+import Login from "../pages/auth/Login";
+import LandingLayouts from "../layouts/LandingLayouts";
+import Landing from "../pages/landing/Landing";
+import Profile from "../pages/profile/Profile";
+import MainLayouts from "../layouts/MainLayouts";
 
 function Router() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route></Route>
+          <Route>
+            <Route path="auth">
+              <Route path="register" element={<Register />} />
+              <Route path="login" element={<Login />} />
+            </Route>
+
+            <Route element={<LandingLayouts />}>
+              <Route path="/" element={<Landing />} />
+            </Route>
+
+            <Route element={<MainLayouts />}>
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+          </Route>
         </Routes>
       </BrowserRouter>
       <ToastContainer
@@ -36,6 +55,5 @@ export function ScrollToTop() {
 
   return null;
 }
-
 
 export default Router;
