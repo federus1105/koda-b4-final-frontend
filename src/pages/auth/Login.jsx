@@ -27,7 +27,10 @@ function Login() {
           <form className="space-y-5">
             {/* EMAIL */}
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-stone-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-semibold text-stone-700"
+              >
                 Email Address
               </label>
 
@@ -38,6 +41,7 @@ function Login() {
                 />
 
                 <input
+                  id="email"
                   type="text"
                   placeholder="Enter your email"
                   className="w-full pl-12 pr-4 py-3.5 border border-stone-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none text-sm md:text-base"
@@ -47,7 +51,10 @@ function Login() {
 
             {/* PASSWORD */}
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-stone-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-semibold text-stone-700"
+              >
                 Password
               </label>
 
@@ -58,6 +65,7 @@ function Login() {
                 />
 
                 <input
+                  id="password"
                   type={isPasswordVisible ? "text" : "password"}
                   placeholder="Enter your password"
                   className="w-full pl-12 pr-12 py-3.5 border border-stone-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none text-sm md:text-base"
