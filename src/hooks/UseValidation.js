@@ -72,3 +72,30 @@ export function useRegister() {
   };
   return { formData, errors, handleChange, validate, setFormData };
 }
+
+// --- HOOK LOGIN ---
+export function useLogin() {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({});
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+   const validate = () => {
+      const newErrors = {
+        email: validateEmail(formData.email),
+        password: validatePassword(formData.password),
+      };
+  
+      setErrors(newErrors);
+      return !Object.values(newErrors).some((err) => err);
+    };
+  
+    return { formData, errors, handleChange, validate, setFormData };
+  };
