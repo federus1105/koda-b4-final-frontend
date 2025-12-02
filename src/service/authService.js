@@ -7,3 +7,11 @@ export const registerUser = (formData) =>
     method: "POST",
     body: JSON.stringify(formData),
   });
+
+  // ====== LOGIN ========
+export const loginUser = async (formData) => {
+  return apiClient("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(formData),
+  });
+};
