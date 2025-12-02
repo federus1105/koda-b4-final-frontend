@@ -1,10 +1,15 @@
+import {reduxStore} from "../redux/store"
+
 export const apiClient = async (endpoint, options = {}) => {
   const baseUrl = import.meta.env.VITE_BASE_URL;
-
+  
+  const state = reduxStore.getState();
+  const token = state.auth.token;
   try {
     const response = await fetch(`${baseUrl}${endpoint}`, {
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(options.headers || {}),
       },
       ...options,
