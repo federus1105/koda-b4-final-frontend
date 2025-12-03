@@ -1,7 +1,13 @@
 import { Eye, EyeOff, Link2, LockKeyhole, Mail, User } from "lucide-react";
 import React, { useState } from "react";
+import { useRegister } from "../../hooks/UseValidation";
+import { registerUser } from "../../service/authService";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
+  const navigate = useNavigate();
+  const { formData, errors, handleChange, validate } = useRegister();
   const [agreed, setAgreed] = useState(false);
   const [passwordVisibility, setPasswordVisibility] = useState({
     password: false,
@@ -14,6 +20,23 @@ function Register() {
       ...prev,
       [field]: !prev[field],
     }));
+  };
+
+  // --- HANDLE SUBMIT ---
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validate()) {
+      return;
+    }
+    try {
+      const data = await registerUser(formData);
+      toast.success("Registrasi berhasil!");
+      navigate("/auth/login");
+    } catch (error) {
+      console.error("Register error:", error);
+      toast.error("Terjadi kesalahan!, Silahkan coba lagi.");
+    }
   };
   return (
     <>
@@ -32,7 +55,7 @@ function Register() {
 
         {/* CARD FORM */}
         <div className="shadow-xl rounded-xl p-6 md:p-10 bg-white space-y-6 w-full sm:w-3/4 md:w-2/3 lg:w-1/3">
-          <form className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* FULLNAME */}
             <div className="space-y-2">
               <label
@@ -51,10 +74,18 @@ function Register() {
                 <input
                   type="text"
                   id="fullname"
+                  name="fullname"
                   placeholder="Enter your fullname"
                   className="w-full pl-12 pr-4 py-3.5 border border-stone-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none text-sm md:text-base"
+                  value={formData.fullname}
+                  onChange={handleChange}
                 />
               </div>
+              {errors.fullname && (
+                <span className="text-red-500 text-sm block mt-1">
+                  {errors.fullname}
+                </span>
+              )}
             </div>
             {/* EMAIL */}
             <div className="space-y-2">
@@ -74,10 +105,18 @@ function Register() {
                 <input
                   type="text"
                   id="email"
+                  name="email"
                   placeholder="Enter your email"
                   className="w-full pl-12 pr-4 py-3.5 border border-stone-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none text-sm md:text-base"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
+              {errors.email && (
+                <span className="text-red-500 text-sm block mt-1">
+                  {errors.email}
+                </span>
+              )}
             </div>
             {/* PASSWORD */}
             <div className="space-y-2">
@@ -96,9 +135,12 @@ function Register() {
 
                 <input
                   id="password"
+                  name="password"
                   type={passwordVisibility.password ? "text" : "password"}
                   placeholder="Enter your password"
                   className="w-full pl-12 pr-12 py-3.5 border border-stone-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none text-sm md:text-base"
+                  value={formData.password}
+                  onChange={handleChange}
                 />
 
                 <button
@@ -113,6 +155,11 @@ function Register() {
                   )}
                 </button>
               </div>
+              {errors.password && (
+                <span className="text-red-500 text-sm block mt-1">
+                  {errors.password}
+                </span>
+              )}
             </div>
 
             {/* CONFIRM PASSWORD */}
@@ -132,11 +179,14 @@ function Register() {
 
                 <input
                   id="confirmpassword"
+                  name="confirm_password"
                   type={
                     passwordVisibility.confirmPassword ? "text" : "password"
                   }
                   placeholder="Enter your confirm password"
                   className="w-full pl-12 pr-12 py-3.5 border border-stone-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none text-sm md:text-base"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
                 />
 
                 <button
@@ -151,7 +201,13 @@ function Register() {
                   )}
                 </button>
               </div>
+              {errors.confirmPassword && (
+                <span className="text-red-500 text-sm block mt-1">
+                  {errors.confirmPassword}
+                </span>
+              )}
             </div>
+
             <div>
               <input
                 type="checkbox"
@@ -164,14 +220,22 @@ function Register() {
               />
               <label htmlFor="checkbox" className="pl-3">
                 I agree to the{" "}
-                <span className="text-blue-400 font-medium">Terms of Service</span> and{" "}
-                <span className="text-blue-400 font-medium"> Privacy Policy</span>
+                <span className="text-blue-400 font-medium">
+                  Terms of Service
+                </span>{" "}
+                and{" "}
+                <span className="text-blue-400 font-medium">
+                  {" "}
+                  Privacy Policy
+                </span>
               </label>
             </div>
             {/* SUBMIT */}
             <button
               type="submit"
-              className="cursor-pointer w-full bg-blue-700 text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-800"
+              disabled={!agreed}
+              className={`w-full py-3 rounded-xl font-semibold shadow-lg
+                ${agreed ? "bg-blue-700 text-white hover:bg-blue-800 cursor-pointer" : "bg-gray-300 text-gray-400 cursor-not-allowed"}`}
             >
               Sign In
             </button>
@@ -197,7 +261,9 @@ function Register() {
         {/* SIGN UP LINK */}
         <p className="text-sm md:text-base">
           Don't have an account?
-          <span className="text-blue-500 cursor-pointer ml-1 font-medium">Sign In</span>
+          <span className="text-blue-500 cursor-pointer ml-1 font-medium">
+            Sign In
+          </span>
         </p>
       </div>
     </>

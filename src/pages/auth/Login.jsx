@@ -1,10 +1,47 @@
 import { Eye, EyeOff, Link2, LockKeyhole, Mail } from "lucide-react";
 import React, { useState } from "react";
+import { useLogin } from "../../hooks/UseValidation";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../service/authService";
+import { toast } from "react-toastify";
+import { login, setCurrentUser } from "../../redux/slice/authSlice";
+import { profileUser } from "../../service/profileService";
 
 function Login() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
+  };
+  const { formData, errors, handleChange, validate } = useLogin();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // --- SUBMIT ---
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) {
+      return;
+    }
+    try {
+      const data = await loginUser(formData);
+      dispatch(
+        login({
+          token: data.results.token,
+          refreshToken: data.results.refresh_token,
+        })
+      );
+
+      // --- FETCH PROFILE USER ---
+      const profile = await profileUser();
+      dispatch(setCurrentUser(profile.results));
+
+      toast.success("Login berhasil!");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Terjadi kesalahan!, Silahkan coba lagi.");
+    }
   };
 
   return (
@@ -24,7 +61,7 @@ function Login() {
 
         {/* CARD FORM */}
         <div className="shadow-xl rounded-xl p-6 md:p-10 bg-white space-y-6 w-full sm:w-3/4 md:w-2/3 lg:w-1/3">
-          <form className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* EMAIL */}
             <div className="space-y-2">
               <label
@@ -42,11 +79,19 @@ function Login() {
 
                 <input
                   id="email"
+                  name="email"
                   type="text"
                   placeholder="Enter your email"
                   className="w-full pl-12 pr-4 py-3.5 border border-stone-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none text-sm md:text-base"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
+              {errors.email && (
+                <span className="text-red-500 text-sm block mt-1">
+                  {errors.email}
+                </span>
+              )}
             </div>
 
             {/* PASSWORD */}
@@ -66,9 +111,12 @@ function Login() {
 
                 <input
                   id="password"
+                  name="password"
                   type={isPasswordVisible ? "text" : "password"}
                   placeholder="Enter your password"
                   className="w-full pl-12 pr-12 py-3.5 border border-stone-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none text-sm md:text-base"
+                  value={formData.password}
+                  onChange={handleChange}
                 />
 
                 <button
@@ -86,6 +134,7 @@ function Login() {
             </p>
 
             {/* SUBMIT */}
+
             <button
               type="submit"
               className="cursor-pointer w-full bg-blue-700 text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-800"
@@ -114,7 +163,9 @@ function Login() {
         {/* SIGN UP LINK */}
         <p className="text-sm md:text-base">
           Don't have an account?
-          <span className="text-blue-500 cursor-pointer ml-1">Sign up</span>
+          <Link to={"/auth/register"}>
+            <span className="text-blue-500 cursor-pointer ml-1">Sign up</span>
+          </Link>
         </p>
       </div>
     </>

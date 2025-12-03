@@ -7,6 +7,9 @@ import LandingLayouts from "../layouts/LandingLayouts";
 import Landing from "../pages/landing/Landing";
 import Profile from "../pages/profile/Profile";
 import MainLayouts from "../layouts/MainLayouts";
+import Dashboard from "../pages/dashboard/Dashboard";
+import Link from "../pages/link/Link";
+import { PrivateRoute } from "../utils/PrivateRoute";
 
 function Router() {
   return (
@@ -24,7 +27,30 @@ function Router() {
             </Route>
 
             <Route element={<MainLayouts />}>
-              <Route path="/profile" element={<Profile />} />
+              <Route
+                path="/profile"
+                element={
+                  <PrivateRoute redirectTo={"/auth/login"}>
+                    <Profile />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute redirectTo={"/auth/login"}>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/link"
+                element={
+                  <PrivateRoute redirectTo={"/auth/login"}>
+                    <Link />
+                  </PrivateRoute>
+                }
+              />
             </Route>
           </Route>
         </Routes>

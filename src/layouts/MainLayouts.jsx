@@ -1,14 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { ScrollToTop } from "../route/Routes";
 import Navbar from "../components/navbar/Navbar";
 
 function MainLayouts() {
+  const [loading, setLoading] = useState(false);
   return (
     <>
       <ScrollToTop />
       <Navbar />
-      <Outlet />
+      {loading && (
+        <div className="loader-overlay">
+          <div className="flex flex-col items-center">
+            <div className="loader"></div>
+            <span className="loader-text">Loading...</span>
+          </div>
+        </div>
+      )}
+      <Outlet context={{ setLoading }} />
     </>
   );
 }

@@ -1,7 +1,45 @@
 import { Shield, TrendingUp, Zap } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { createShortlink } from "../../service/shortLinkService";
+import { useOutletContext } from "react-router-dom";
 
 function Landing() {
+  const [longUrl, setLongUrl] = useState("");
+  const [shortUrl, setShortUrl] = useState("");
+  const { setLoading } = useOutletContext();
+
+  const handleShorten = async () => {
+    if (!longUrl) return;
+
+    setLoading(true);
+    try {
+      const res = await createShortlink(longUrl);
+      await new Promise((r) => setTimeout(r, 800));
+
+      setShortUrl(res.results.short_url);
+      toast.success("Short link created Successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Terjadi kesalahan!, Coba lagi nanti");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleCopy = async () => {
+    if (!shortUrl) return;
+
+    setLoading(true);
+    try {
+      await navigator.clipboard.writeText(shortUrl);
+      await new Promise((r) => setTimeout(r, 500));
+      toast.info("Short URL copied to clipboard!");
+    } catch {
+      toast.error("Failed to copy URL");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
@@ -25,8 +63,13 @@ function Landing() {
               type="text"
               placeholder="Enter your long URL here..."
               className="flex-1 px-6 py-4 text-base border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              value={longUrl}
+              onChange={(e) => setLongUrl(e.target.value)}
             />
-            <button className="cursor-pointer bg-blue-600 text-white px-8 py-4 rounded-lg font-medium text-base whitespace-nowrap">
+            <button
+              className="cursor-pointer bg-blue-600 text-white px-8 py-4 rounded-lg font-medium text-base whitespace-nowrap"
+              onClick={handleShorten}
+            >
               Shorten
             </button>
           </div>
@@ -40,16 +83,19 @@ function Landing() {
               <div className="flex flex-col sm:flex-row gap-3 items-center">
                 <input
                   type="text"
+                  value={shortUrl}
+                  readOnly
                   placeholder="Your short URL"
                   className="flex-1 w-full px-6 py-3 text-base border border-gray-300 rounded-lg bg-gray-50 focus:outline-none"
                 />
-                <button className="bg-gray-900 text-white px-8 py-3 rounded-lg font-medium text-base whitespace-nowrap">
+                <button
+                  className="cursor-pointer bg-gray-900 text-white px-8 py-3 rounded-lg font-medium text-base whitespace-nowrap"
+                  onClick={handleCopy}
+                  disabled={!shortUrl}
+                >
                   Copy
                 </button>
               </div>
-              <p className="text-xs text-gray-400 text-center mt-4">
-                Sign in to track analytics and manage your links.
-              </p>
             </div>
           </div>
 
@@ -68,7 +114,6 @@ function Landing() {
               </p>
             </div>
 
-            {/* Advanced Analytics */}
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
                 <TrendingUp className="w-6 h-6 text-purple-600" />
@@ -82,7 +127,6 @@ function Landing() {
               </p>
             </div>
 
-            {/* Secure & Reliable */}
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-6">
                 <Shield className="w-6 h-6 text-green-600" />
