@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRegister } from "../../hooks/UseValidation";
 import { registerUser } from "../../service/authService";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Register() {
   const navigate = useNavigate();
@@ -235,7 +235,11 @@ function Register() {
               type="submit"
               disabled={!agreed}
               className={`w-full py-3 rounded-xl font-semibold shadow-lg
-                ${agreed ? "bg-blue-700 text-white hover:bg-blue-800 cursor-pointer" : "bg-gray-300 text-gray-400 cursor-not-allowed"}`}
+                ${
+                  agreed
+                    ? "bg-blue-700 text-white hover:bg-blue-800 cursor-pointer"
+                    : "bg-gray-300 text-gray-400 cursor-not-allowed"
+                }`}
             >
               Sign In
             </button>
@@ -260,10 +264,12 @@ function Register() {
 
         {/* SIGN UP LINK */}
         <p className="text-sm md:text-base">
-          Don't have an account?
-          <span className="text-blue-500 cursor-pointer ml-1 font-medium">
-            Sign In
-          </span>
+          have an account?
+          <Link to={"/auth/login"}>
+            <span className="text-blue-500 cursor-pointer ml-1 font-medium">
+              Sign In
+            </span>
+          </Link>
         </p>
       </div>
     </>
