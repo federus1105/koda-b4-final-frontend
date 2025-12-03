@@ -7,6 +7,8 @@ import LandingLayouts from "../layouts/LandingLayouts";
 import Landing from "../pages/landing/Landing";
 import Profile from "../pages/profile/Profile";
 import MainLayouts from "../layouts/MainLayouts";
+import Dashboard from "../pages/dashboard/Dashboard";
+import Link from "../pages/link/Link";
 
 function Router() {
   return (
@@ -25,6 +27,8 @@ function Router() {
 
             <Route element={<MainLayouts />}>
               <Route path="/profile" element={<Profile />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/link" element={<Link />} />
             </Route>
           </Route>
         </Routes>
