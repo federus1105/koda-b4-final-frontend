@@ -28,6 +28,7 @@ function Login() {
       dispatch(
         login({
           token: data.results.token,
+          refreshToken: data.results.refresh_token,
         })
       );
 
@@ -36,7 +37,7 @@ function Login() {
       dispatch(setCurrentUser(profile.results));
 
       toast.success("Login berhasil!");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Terjadi kesalahan!, Silahkan coba lagi.");
